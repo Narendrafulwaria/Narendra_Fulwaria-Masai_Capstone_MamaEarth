@@ -1,0 +1,8 @@
+Situation:
+Mamaearth's cleaned total revenue stands at INR 97,358.30. When reconciling this against the raw total revenue (before cleaning) of INR 99,860.20, we identified a difference of INR 2,501.90, which was caused by removing duplicate (double-submit) orders. 
+
+Complication:
+Regional return rates vary significantly by payment method: COD sits at 44.4%, CARD at 14.7%, and UPI at 18.9%. The highest-risk segment is clearly COD orders in Tier-2 cities, which suffer from a staggering 54.5% return rate. Furthermore, baseline trends were distorted at the start of the year: January 2026 looked like the peak at INR 29,582.10 because two bulk orders inflated it, whereas the corrected revenue for January is actually INR 11,637.10. 
+
+Resolution:
+To protect regional margins, operations and finance must collaborate to address high-risk fulfillment channels, specifically targeting the high-return COD Tier-2 segment with stricter verification or prepay incentives. Additionally, financial forecasting and operational planning must rely on outlier-corrected figures, properly recognizing the true peak revenue month as March 2026 at INR 20,318.90 rather than the inflated January figures.
