@@ -33,7 +33,7 @@ os.makedirs("narrator", exist_ok=True)
 with open("narrator/findings.json", "w") as f:
     json.dump(findings, f, indent=2)
 
-print(json.dumps(findings, indent=2))
+#print(json.dumps(findings, indent=2))
 
 
 
