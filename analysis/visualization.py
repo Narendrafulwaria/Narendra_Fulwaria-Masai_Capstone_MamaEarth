@@ -39,5 +39,5 @@ plt.tight_layout()
 plt.savefig("visualizations/monthly_revenue_trend.png", dpi=150)
 plt.show()
 
-print(os.listdir("visualizations"))
+# print(os.listdir("visualizations"))
 
