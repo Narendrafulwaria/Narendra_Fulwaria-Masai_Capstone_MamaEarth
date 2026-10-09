@@ -33,7 +33,7 @@ os.makedirs("narrator", exist_ok=True)
 with open("narrator/findings.json", "w") as f:
     json.dump(findings, f, indent=2)
 
-print(json.dumps(findings, indent=2))
+# print(json.dumps(findings, indent=2))
 
 # SETUP: imports and helpers (must run BEFORE Tasks 2-5)
 import os
@@ -189,7 +189,7 @@ def get_narrative(findings: dict):
     result = generate_scr_narrative(findings , get_api_key())
     if result["status"] == "success":
         return result, "online"
-    print(f"[narrator] Online path unavailable ({result['message']}). Using offline fallback.")
+    # print(f"[narrator] Online path unavailable ({result['message']}). Using offline fallback.")
     return generate_scr_narrative_offline(findings), "offline"
 
 
@@ -220,7 +220,7 @@ def check_figures(narrative: str, findings: dict) -> bool:
         ok = needle in text
         all_ok = all_ok and ok
         print(f"{'PASS' if ok else 'FAIL'}  {label}: '{needle}'")
-    print("OVERALL:", "PASS" if all_ok else "FAIL")
+    # print("OVERALL:", "PASS" if all_ok else "FAIL")
     return all_ok
 
 
@@ -234,12 +234,12 @@ if __name__ == "__main__":
         sys.exit(0)
 
     result, path = get_narrative(findings)
-    print(f"\n=== Narrative (path: {path}) ===\n")
-    print(result["narrative"])
-    print("\n=== Numeric accuracy check ===")
+    # print(f"\n=== Narrative (path: {path}) ===\n")
+    # print(result["narrative"])
+    # print("\n=== Numeric accuracy check ===")
     check_figures(result["narrative"], findings)
 
     # Online output is saved as the graded sample; offline output is saved separately
     out_name = "sample_output.txt" if path == "online" else "sample_output_offline.txt"
     (BASE_DIR / out_name).write_text(result["narrative"])
-    print(f"\nSaved to narrator/{out_name}")
+    # print(f"\nSaved to narrator/{out_name}")
