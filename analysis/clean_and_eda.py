@@ -24,7 +24,7 @@ if not all(os.path.exists(f"data/{f}") for f in REQUIRED):
 
 def check(label, actual, expected):
     """Compare a computed value with the brief's expected value."""
-    print(f"   [{'PASS' if actual == expected else 'FAIL'}] {label}: got {actual} | expected {expected}")
+    #print(f"   [{'PASS' if actual == expected else 'FAIL'}] {label}: got {actual} | expected {expected}")
 
 # TASK 1: Load the three raw CSVs and show the orders shape before any cleaning
 import pandas as pd
@@ -35,21 +35,21 @@ customers = pd.read_csv("data/customers.csv")
 products  = pd.read_csv("data/products.csv")
 orders    = pd.read_csv("data/orders.csv")
 
-print("customers shape:", customers.shape)   # (45, 6)
-print("products shape :", products.shape)    # (16, 4)
-print("orders shape   :", orders.shape)      # (180, 9)
-print(orders.head())
+#print("customers shape:", customers.shape)   # (45, 6)
+#print("products shape :", products.shape)    # (16, 4)
+#print("orders shape   :", orders.shape)      # (180, 9)
+#print(orders.head())
 
 # TASK 2: Show the 7 raw payment_method values, then standardize with strip + upper
-print("Raw unique values :", orders["payment_method"].unique())
-print("Raw distinct count:", orders["payment_method"].nunique())     # 7
+#print("Raw unique values :", orders["payment_method"].unique())
+#print("Raw distinct count:", orders["payment_method"].nunique())     # 7
 
 orders["payment_method"] = orders["payment_method"].str.strip().str.upper()
 
-print("\nCleaned unique values:", orders["payment_method"].unique())
-print("Cleaned distinct count:", orders["payment_method"].nunique()) # 3
-print("\nCounts after fix:")
-print(orders["payment_method"].value_counts())                       # CARD 70, UPI 55, COD 55
+#print("\nCleaned unique values:", orders["payment_method"].unique())
+#print("Cleaned distinct count:", orders["payment_method"].nunique()) # 3
+#print("\nCounts after fix:")
+#print(orders["payment_method"].value_counts())                       # CARD 70, UPI 55, COD 55
 
 # TASK 3: Detect duplicates on the natural key (everything except order_id), keep first, drop the rest
 natural_key = ["customer_id", "product_id", "order_date", "quantity",
@@ -58,27 +58,27 @@ natural_key = ["customer_id", "product_id", "order_date", "quantity",
 dup_mask = orders.duplicated(subset=natural_key, keep="first")
 dropped_rows = orders[dup_mask].copy()
 
-print("Duplicate rows flagged:", dup_mask.sum())                      # 5
-print("Dropped order_ids     :", dropped_rows["order_id"].tolist())   # O0176..O0180
+#print("Duplicate rows flagged:", dup_mask.sum())                      # 5
+#print("Dropped order_ids     :", dropped_rows["order_id"].tolist())   # O0176..O0180
 
 orders_clean = orders[~dup_mask].copy()
-print("orders_clean shape    :", orders_clean.shape)                  # (175, 9)
+#print("orders_clean shape    :", orders_clean.shape)                  # (175, 9)
 
 # TASK 4: Impute on the deduplicated frame
 # discount_pct: NaN -> 0 (no promo applied)
 disc_missing = orders_clean["discount_pct"].isnull().sum()
-print("discount_pct rows affected:", disc_missing)                    # 12
+#print("discount_pct rows affected:", disc_missing)                    # 12
 orders_clean["discount_pct"] = orders_clean["discount_pct"].fillna(0)
 
 # rating: NaN -> median of the non-null ratings (print the median BEFORE imputing)
 rating_median = orders_clean["rating"].dropna().median()
 rating_missing = orders_clean["rating"].isnull().sum()
-print("rating median (before imputing):", rating_median)             # 3.0
-print("rating rows affected           :", rating_missing)            # 15
+#print("rating median (before imputing):", rating_median)             # 3.0
+#print("rating rows affected           :", rating_missing)            # 15
 orders_clean["rating"] = orders_clean["rating"].fillna(rating_median)
 
-print("\nNulls remaining:")
-print(orders_clean[["discount_pct", "rating"]].isnull().sum().to_dict())  # both 0
+#print("\nNulls remaining:")
+#print(orders_clean[["discount_pct", "rating"]].isnull().sum().to_dict())  # both 0
 
 # TASK 5: Merge orders with products and customers, compute order_value, reconcile with Part 1 Report (a)
 merged = (orders_clean
@@ -88,8 +88,8 @@ merged = (orders_clean
 merged["order_value"] = merged["quantity"] * merged["price"] * (1 - merged["discount_pct"] / 100)
 
 cleaned_total = round(merged["order_value"].sum(), 2)
-print("Merged shape            :", merged.shape)
-print("Cleaned total revenue   : INR", f"{cleaned_total:,.2f}")      # 97358.30
+#print("Merged shape            :", merged.shape)
+#print("Cleaned total revenue   : INR", f"{cleaned_total:,.2f}")      # 97358.30
 
 # Independent check: order_value of the 5 dropped duplicate rows
 dropped_val = dropped_rows.merge(products, on="product_id", how="left")
@@ -106,11 +106,11 @@ raw_total = round(raw_all["order_value"].sum(), 2)                   # 99860.20
 
 delta = round(raw_total - cleaned_total, 2)                          # 2501.90
 
-print("Raw total (Part 1 (a))  : INR", f"{raw_total:,.2f}")
-print("Dropped 5 rows' value   : INR", f"{dropped_total:,.2f}")      # 2501.90
-print("Delta (raw - cleaned)   : INR", f"{delta:,.2f}")              # 2501.90
+#print("Raw total (Part 1 (a))  : INR", f"{raw_total:,.2f}")
+#print("Dropped 5 rows' value   : INR", f"{dropped_total:,.2f}")      # 2501.90
+#print("Delta (raw - cleaned)   : INR", f"{delta:,.2f}")              # 2501.90
 
-print(f"""
+#print(f"""
 RECONCILIATION NOTE
 The cleaned total revenue of INR {cleaned_total:,.2f} is INR {delta:,.2f} lower than the raw Part 1 Report (a)
 total of INR {raw_total:,.2f}. This entire difference is attributable to the 5 duplicate (double-submit) orders
@@ -127,47 +127,47 @@ IQR = Q3 - Q1
 lower = Q1 - 1.5 * IQR
 upper = Q3 + 1.5 * IQR
 
-print(f"Q1={Q1}  Q3={Q3}  IQR={IQR}  lower={lower}  upper={upper}")  # 1.0 2.0 1.0 -0.5 3.5
+#print(f"Q1={Q1}  Q3={Q3}  IQR={IQR}  lower={lower}  upper={upper}")  # 1.0 2.0 1.0 -0.5 3.5
 
 merged["is_outlier"] = (merged["quantity"] < lower) | (merged["quantity"] > upper)
 
-print("\nOutlier rows:", merged["is_outlier"].sum())                  # 2
-print(merged.loc[merged["is_outlier"], ["order_id", "order_date", "quantity", "order_value"]])
+#print("\nOutlier rows:", merged["is_outlier"].sum())                  # 2
+#print(merged.loc[merged["is_outlier"], ["order_id", "order_date", "quantity", "order_value"]])
 
 # TASK 7: State the hypothesis, then test it with groupby
-print("HYPOTHESIS: Cash-on-Delivery (COD) orders have a higher return rate than Card or UPI orders.\n")
+#print("HYPOTHESIS: Cash-on-Delivery (COD) orders have a higher return rate than Card or UPI orders.\n")
 
 pay_stats = merged.groupby("payment_method")["returned"].agg(["count", "mean"])
 pay_stats["return_rate_pct"] = (pay_stats["mean"] * 100).round(1)
-print(pay_stats)                                                      # CARD 14.7, COD 44.4, UPI 18.9
+#print(pay_stats)                                                      # CARD 14.7, COD 44.4, UPI 18.9
 
 cod_rate = pay_stats.loc["COD", "return_rate_pct"]
 other_max = pay_stats.drop("COD")["return_rate_pct"].max()
 verdict = "Confirmed" if cod_rate > other_max else "Rejected"
-print(f"\nHypothesis verdict: {verdict} (COD {cod_rate}% vs next highest {other_max}%)")
+#print(f"\nHypothesis verdict: {verdict} (COD {cod_rate}% vs next highest {other_max}%)")
 
 # TASK 8: Return rate by payment_method x city_tier
 seg = merged.groupby(["payment_method", "city_tier"])["returned"].agg(["count", "mean"])
 seg["return_rate_pct"] = (seg["mean"] * 100).round(1)
-print(seg)
+#print(seg)
 
 # Highest-risk segment
 top_seg = seg["return_rate_pct"].idxmax()
 top_seg_rate = seg.loc[top_seg, "return_rate_pct"]
 top_seg_count = seg.loc[top_seg, "count"]
-print(f"\nHIGHEST-RISK SEGMENT: {top_seg[0]} + Tier-{top_seg[1]} cities at {top_seg_rate}% ({top_seg_count} orders)")
+#print(f"\nHIGHEST-RISK SEGMENT: {top_seg[0]} + Tier-{top_seg[1]} cities at {top_seg_rate}% ({top_seg_count} orders)")
 
 # Show that COD risk is not uniform across tiers
 cod_t1 = seg.loc[("COD", 1)]
 cod_t2 = seg.loc[("COD", 2)]
-print(f"COD Tier-1: {int(cod_t1['count'])} orders at {cod_t1['return_rate_pct']}%")   # 32 at 37.5
-print(f"COD Tier-2: {int(cod_t2['count'])} orders at {cod_t2['return_rate_pct']}%")   # 22 at 54.5
-print("COD risk is NOT uniform across tiers: a single blended COD rate hides the Tier-2 concentration.")
+# print(f"COD Tier-1: {int(cod_t1['count'])} orders at {cod_t1['return_rate_pct']}%")   # 32 at 37.5
+# print(f"COD Tier-2: {int(cod_t2['count'])} orders at {cod_t2['return_rate_pct']}%")   # 22 at 54.5
+# print("COD risk is NOT uniform across tiers: a single blended COD rate hides the Tier-2 concentration.")
 
 # TASK 9: Correlation matrix + strength band for each pair
 corr_cols = ["rating", "returned", "discount_pct", "quantity"]
 corr = merged[corr_cols].corr()
-print(corr.round(3))
+# print(corr.round(3))
 
 def band(r):
     a = abs(r)
@@ -176,14 +176,14 @@ def band(r):
     if a < 0.7:  return "moderate"
     return "strong"
 
-print("\nPairwise strength (0-0.19 negligible / 0.2-0.39 weak / 0.4-0.69 moderate / 0.7-1.0 strong):")
+# print("\nPairwise strength (0-0.19 negligible / 0.2-0.39 weak / 0.4-0.69 moderate / 0.7-1.0 strong):")
 for a, b in combinations(corr_cols, 2):
     r = corr.loc[a, b]
     print(f"  {a:>13} vs {b:<13} r = {r:+.3f}  -> {band(r)}")
 
 r_disc_ret = corr.loc["discount_pct", "returned"]
 verdict = "Busted" if abs(r_disc_ret) < 0.2 else "Supported"
-print(f"\nHYPOTHESIS 'higher discounts reduce returns': {verdict} "
+# print(f"\nHYPOTHESIS 'higher discounts reduce returns': {verdict} "
       f"(discount_pct vs returned r = {r_disc_ret:+.3f})")
 
 # TASK 10: Monthly revenue with and without the two outlier orders
@@ -196,16 +196,16 @@ monthly_all = merged.groupby("year_month")["order_value"].sum().round(2)
 # (2) Excluding outliers (outlier-corrected)
 monthly_corrected = merged[~merged["is_outlier"]].groupby("year_month")["order_value"].sum().round(2)
 
-print("(1) Monthly revenue INCLUDING outliers:")
-print(monthly_all.to_string())
+# print("(1) Monthly revenue INCLUDING outliers:")
+# print(monthly_all.to_string())
 
-print("\n(2) Monthly revenue EXCLUDING outliers (corrected):")
-print(monthly_corrected.to_string())
+# print("\n(2) Monthly revenue EXCLUDING outliers (corrected):")
+# print(monthly_corrected.to_string())
 
 apparent_peak = monthly_all.idxmax()
 true_peak = monthly_corrected.idxmax()
 
-print(f"""
+# print(f"""
 INTERPRETATION
 {apparent_peak}'s apparent lead (INR {monthly_all[apparent_peak]:,.2f}) is an artifact of the two bulk orders that
 landed in January: O0011 (quantity 25) on 2026-01-28 and O0098 (quantity 30) on 2026-01-10.
